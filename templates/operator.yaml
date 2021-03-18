@@ -1,0 +1,92 @@
+{{- if .Values.operator.enabled }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "operator.fullname" . }}
+  labels:
+    {{- include "operator.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.operator.autoscaling.enabled }}
+  replicas: {{ .Values.operator.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "operator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.operator.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "operator.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "operator.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: operator
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+          env:
+            - name: ESK_BACKENDS
+              value: {{ include "esk.backends" . }}
+            - name: BACKEND_AUTH
+              value: {{ .Values.secretRBAC.backend | quote }}
+            - name: ALLOW_BY_DEFAULT
+              value: {{ .Values.secretRBAC.defaultAllow | quote }}
+            {{- range $name, $value := .Values.operator.env }}
+            - name: {{ $name }}
+              value: {{ $value }}
+            {{- end }}
+            {{- if .Values.backends.vault.enabled }}
+            - name: VAULT_ADDR
+              value: {{ .Values.backends.vault.address }}
+              {{- if .Values.backends.vault.ca_cert }}
+            - name: VAULT_CACERT
+              value: {{ .Values.backends.vault.ca_cert }}
+              {{- end }}
+            - name: VAULT_TOKEN
+              value: {{ .Values.backends.vault.token_path }}
+            - name: VAULT_DEFAULT_MOUNT_POINT
+              value: {{ .Values.backends.vault.defaultMountPoint }}
+            {{- end }}
+            {{- if .Values.backends.aws.enabled }}
+            - name: AWS_ACCOUNT_ID
+              value: {{ .Values.backends.aws.accountID }}
+            - name: AWS_REGION
+              value: {{ .Values.backends.aws.region }}
+            {{- end }}
+            {{- if .Values.backends.gcp.enabled }}
+            - name: GCP_PROJECT_ID
+              value: {{ .Values.backends.gcp.projectID }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.operator.resources | nindent 12 }}
+          {{- if .Values.operator.volumeMounts }}
+          volumeMounts:
+            {{- range $name, $value := .Values.operator.volumeMounts }}
+            - name: {{ $name }}
+              value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.operator.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.operator.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.operator.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

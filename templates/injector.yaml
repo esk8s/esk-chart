@@ -1,0 +1,122 @@
+{{- if .Values.injector.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "injector.fullname" . }}
+  labels:
+    {{- include "injector.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.injector.autoscaling.enabled }}
+  replicas: {{ .Values.injector.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "injector.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.injector.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "injector.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "injector.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: esk
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.injector.image.repository }}:{{ .Values.injector.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.injector.image.pullPolicy }}
+          env:
+            - name: CERT_FILE_PATH
+              value: {{ include "injector.certificatePath" . | quote }}
+            - name: CERT_KEY_PATH
+              value: {{ include "injector.keyPath" . | quote }}
+            - name: ESK_BACKENDS
+              value: {{ include "esk.backends" . }}
+            - name: BACKEND_AUTH
+              value: {{ .Values.secretRBAC.backend | quote }}
+            - name: PROCESSOR_ADDR
+              value: "https://{{ include "injector.fullname" . }}.{{ .Release.Namespace }}.svc"
+            - name: INIT_IMAGE
+              value: "{{ .Values.init.image.repository }}:{{ .Values.init.image.tag | default "latest" }}"
+            {{- if .Values.backends.aws.enabled }}
+            - name: AWS_SHARED_CREDENTIALS_FILE
+              value: {{ .Values.backends.aws.credentialsPath }}
+            - name: AWS_ACCOUNT_ID
+              value: {{ .Values.backends.aws.accountID }}
+            - name: AWS_DEFAULT_REGION
+              value: {{ .Values.backends.aws.region }}
+            {{- end }}
+            {{- if .Values.backends.gcp.enabled }}
+            - name: GCP_PROJECT_ID
+              value: {{ .Values.backends.gcp.projectID }}
+            {{- end }}
+            {{- if .Values.backends.vault.enabled }}
+            - name: VAULT_ADDR
+              value: {{ .Values.backends.vault.address }}
+            - name: VAULT_TOKEN_PATH
+              value: {{ .Values.backends.vault.token_path }}
+            {{- end }}
+            {{- range $name, $value := .Values.injector.env }}
+            - name: {{ $name }}
+              value: {{ $value }}
+            {{- end }}
+          ports:
+            - name: injector
+              containerPort: {{ .Values.injector.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: injector
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: injector
+              scheme: HTTPS
+          resources:
+            {{- toYaml .Values.injector.resources | nindent 12 }}
+          {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName .Values.injector.volumeMounts }}
+          volumeMounts:
+            {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName }}
+            - name: tls-certificate
+              mountPath: /tlsconfig
+            {{- end }}
+            {{- range $name, $value := .Values.injector.volumeMounts }}
+            - name: {{ $name }}
+              value: {{ $value }}
+            {{- end }}
+          {{- end }}
+      {{- with .Values.injector.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.injector.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.injector.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName .Values.injector.volumes }}
+      volumes:
+        {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName }}
+        - name: tls-certificate
+          secret:
+            secretName: "{{ .Values.injector.tls.secretName | default (printf "%s-tls" (include "injector.fullname" .)) }}"
+        {{- end }}
+        {{- if .Values.injector.volumes }}
+        {{- toYaml .Values.injector.volumes | nindent 6 }}
+        {{- end }}
+      {{- end }}
+{{- end }}
