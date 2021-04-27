@@ -19,7 +19,7 @@ metadata:
 rules:
   - apiGroups: [esk.io]
     resources: ["*"]
-    verbs: [get]
+    verbs: [get, list]
 
   - apiGroups: [""]
     resources: [events]
