@@ -60,7 +60,7 @@ spec:
             {{- end }}
             {{- if .Values.backends.aws.enabled }}
             - name: AWS_ACCOUNT_ID
-              value: {{ .Values.backends.aws.accountID }}
+              value: {{ .Values.backends.aws.accountID | quote }}
             - name: AWS_REGION
               value: {{ .Values.backends.aws.region }}
             {{- end }}
