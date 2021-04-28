@@ -21,6 +21,7 @@ spec:
     {{- end }}
       labels:
         {{- include "operator.selectorLabels" . | nindent 8 }}
+        {{- toYaml .Values.operator.labels | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -61,7 +62,7 @@ spec:
             {{- if .Values.backends.aws.enabled }}
             - name: AWS_ACCOUNT_ID
               value: {{ .Values.backends.aws.accountID | quote }}
-            - name: AWS_REGION
+            - name: AWS_DEFAULT_REGION
               value: {{ .Values.backends.aws.region }}
             {{- end }}
             {{- if .Values.backends.gcp.enabled }}

@@ -20,6 +20,7 @@ spec:
     {{- end }}
       labels:
         {{- include "injector.selectorLabels" . | nindent 8 }}
+        {{- toYaml .Values.injector.labels | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -87,6 +88,8 @@ spec:
             {{- toYaml .Values.injector.resources | nindent 12 }}
           {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName .Values.injector.volumeMounts }}
           volumeMounts:
+            - name: podinfo
+              mountPath: /etc/podinfo
             {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName }}
             - name: tls-certificate
               mountPath: /tlsconfig
@@ -110,6 +113,12 @@ spec:
       {{- end }}
       {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName .Values.injector.volumes }}
       volumes:
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: namespace
+                fieldRef:
+                  fieldPath: metadata.namespace
         {{- if or .Values.certificateGenerator.enabled .Values.injector.tls.secretName }}
         - name: tls-certificate
           secret:

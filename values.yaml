@@ -40,6 +40,8 @@ injector:
 
   replicaCount: 1
 
+  labels: {}
+
   image:
     repository: esk8s/esk-injector
     pullPolicy: IfNotPresent
@@ -111,6 +113,8 @@ certificateGenerator:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
+  labels: {}
+
 operator:
   enabled: true
 
@@ -133,6 +137,8 @@ operator:
 
   rbac:
     create: true
+
+  labels: {}
 
   env: []
   resources: {}
