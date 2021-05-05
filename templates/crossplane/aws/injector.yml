@@ -1,5 +1,5 @@
 {{- if .Values.backends.aws.crossplane.enabled }}
-apiVersion: identity.backends.aws.crossplane.io/v1alpha1
+apiVersion: identity.aws.crossplane.io/v1alpha1
 kind: IAMPolicy
 metadata:
   name: {{ include "injector.fullname" . }}
@@ -24,7 +24,7 @@ spec:
         ]
       }
 ---
-apiVersion: identity.backends.aws.crossplane.io/v1beta1
+apiVersion: identity.aws.crossplane.io/v1beta1
 kind: IAMRole
 metadata:
   name: {{ include "injector.fullname" . }}
@@ -52,7 +52,7 @@ spec:
         ]
       }
 ---
-apiVersion: identity.backends.aws.crossplane.io/v1beta1
+apiVersion: identity.aws.crossplane.io/v1beta1
 kind: IAMRolePolicyAttachment
 metadata:
   name: {{ include "injector.fullname" . }}
