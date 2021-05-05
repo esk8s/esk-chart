@@ -27,6 +27,7 @@ webhooks:
       - "v1"
     resources:
       - "pods"
+  admissionReviewVersions: ["v1", "v1beta1"]
   sideEffects: {{ .Values.injector.sideEffects }}
   timeoutSeconds: {{ .Values.injector.timeoutSeconds | int }}
   reinvocationPolicy: {{ .Values.injector.reinvocationPolicy }}
