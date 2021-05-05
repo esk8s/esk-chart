@@ -3,7 +3,17 @@ entries:
   esk:
   - apiVersion: v2
     appVersion: 0.6.0
-    created: "2021-04-28T12:24:39.776642+02:00"
+    created: "2021-05-05T13:19:19.988622+02:00"
+    description: Helm chart for the kubernetes secrets control plane
+    digest: 328749bfe0035c13e2b8179c3bb9fb04ee096950c4ca439bce58eea7c29f5f61
+    name: esk
+    type: application
+    urls:
+    - releases/esk-0.2.2.tgz
+    version: 0.2.2
+  - apiVersion: v2
+    appVersion: 0.6.0
+    created: "2021-05-05T13:19:19.987847+02:00"
     description: Helm chart for the kubernetes secrets control plane
     digest: bd8d2b95951b2c5eb37a2701b2fb214598e007a6f631a17b2f6d79217b291a2e
     name: esk
@@ -13,7 +23,7 @@ entries:
     version: 0.2.1
   - apiVersion: v2
     appVersion: 0.6.0
-    created: "2021-04-28T12:24:39.775943+02:00"
+    created: "2021-05-05T13:19:19.986552+02:00"
     description: Helm chart for the kubernetes secrets control plane
     digest: dff5b5a6dc474d2744d07d75172b63626f9432e62fbfb5df026f18e96b7f9149
     name: esk
@@ -21,4 +31,4 @@ entries:
     urls:
     - releases/esk-0.2.0.tgz
     version: 0.2.0
-generated: "2021-04-28T12:24:39.774245+02:00"
+generated: "2021-05-05T13:19:19.984201+02:00"

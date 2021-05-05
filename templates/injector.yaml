@@ -20,7 +20,9 @@ spec:
     {{- end }}
       labels:
         {{- include "injector.selectorLabels" . | nindent 8 }}
-        {{- toYaml .Values.injector.labels | nindent 8 }}
+        {{- with .Values.injector.labels }}
+        {{ toYaml . }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

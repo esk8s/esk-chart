@@ -10,7 +10,9 @@ spec:
     metadata:
       labels:
         {{- include "certificateGenerator.labels" . | nindent 8 }}
-        {{- toYaml .Values.certificateGenerator.labels | nindent 8 }}
+        {{- with .Values.certificateGenerator.labels }}
+        {{ toYaml . }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "certificateGenerator.serviceAccountName" .  }}
       containers:
