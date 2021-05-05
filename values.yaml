@@ -23,6 +23,15 @@ backends:
     enabled: false
     accountID: ""
     region: ""
+    oidcProvider:
+    crossplane:
+      enabled: false
+      injector:
+        roleName:
+        policyName:
+      operator:
+        roleName:
+        policyName:
   
   gcp:
     enabled: false

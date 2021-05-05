@@ -1,0 +1,65 @@
+{{- if .Values.backends.aws.crossplane.enabled }}
+apiVersion: identity.backends.aws.crossplane.io/v1alpha1
+kind: IAMPolicy
+metadata:
+  name: {{ include "injector.fullname" . }}
+spec:
+  forProvider:
+    name: {{ .Values.backends.aws.crossplane.injector.policyName | default (include "injector.fullname" .) }}
+    description: Policy for the esk injector
+    document: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:ListSecretVersionIds"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+---
+apiVersion: identity.backends.aws.crossplane.io/v1beta1
+kind: IAMRole
+metadata:
+  name: {{ include "injector.fullname" . }}
+  annotations:
+    crossplane.io/external-name: {{ .Values.backends.aws.crossplane.injector.roleName | default (include "injector.fullname" .) }}
+spec:
+  forProvider:
+    description: Role for the esk injector
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Federated": "arn:aws:iam::{{ .Values.backends.aws.accountId }}:oidc-provider/oidc.eks.{{ .Values.backends.aws.region }}.amazonaws.com/id/{{ .Values.backends.aws.oidcProvider }}"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+              "StringLike": {
+                "oidc.eks.{{ .Values.backends.aws.region }}.amazonaws.com/id/{{ .Values.backends.aws.oidcProvider }}:sub": "system:serviceaccount:{{ .Release.Namespace }}:{{ include "injector.serviceAccountName" . }}"
+              }
+            }
+          }
+        ]
+      }
+---
+apiVersion: identity.backends.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: {{ include "injector.fullname" . }}
+spec:
+  forProvider:
+    policyArnRef:
+      name: {{ include "injector.fullname" . }}
+    roleNameRef:
+      name: {{ include "injector.fullname" . }}
+{{- end }}

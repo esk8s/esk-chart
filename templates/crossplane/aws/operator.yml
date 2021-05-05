@@ -1,0 +1,64 @@
+{{- if .Values.backends.aws.crossplane.enabled }}
+apiVersion: identity.aws.crossplane.io/v1alpha1
+kind: IAMPolicy
+metadata:
+  name: "{{ include "operator.fullname" . }}"
+spec:
+  forProvider:
+    name: "{{ default (include "operator.fullname" .) .Values.backends.aws.crossplane.operator.policyName }}"
+    description: Policy for the esk operator
+    document: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:*"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRole
+metadata:
+  name: {{ include "operator.fullname" . }}
+  namespace: tools
+  annotations:
+    crossplane.io/external-name: {{ .Values.backends.aws.crossplane.operator.roleName | default (include "operator.fullname" .) }}
+spec:
+  forProvider:
+    description: Role for the esk operator
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Federated": "arn:aws:iam::{{ .Values.backends.aws.accountId }}:oidc-provider/oidc.eks.{{ .Values.backends.aws.region }}.amazonaws.com/id/{{ .Values.backends.aws.oidcProvider }}"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+              "StringLike": {
+                "oidc.eks.{{ .Values.backends.aws.region }}.amazonaws.com/id/{{ .Values.backends.aws.oidcProvider }}:sub": "system:serviceaccount:{{ .Release.Namespace }}:{{ include "operator.serviceAccountName" . }}"
+              }
+            }
+          }
+        ]
+      }
+---
+apiVersion: identity.aws.crossplane.io/v1beta1
+kind: IAMRolePolicyAttachment
+metadata:
+  name: {{ include "operator.fullname" . }}
+  namespace: tools
+spec:
+  forProvider:
+    policyArnRef:
+      name: {{ include "operator.fullname" . }}
+    roleNameRef:
+      name: {{ include "operator.fullname" . }}
+{{- end }}
