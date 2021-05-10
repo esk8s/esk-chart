@@ -5,7 +5,7 @@ metadata:
   name: "{{ include "operator.fullname" . }}"
 spec:
   forProvider:
-    name: "{{ default (include "operator.fullname" .) .Values.backends.aws.crossplane.operator.policyName }}"
+    name: "{{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) }}"
     description: Policy for the esk operator
     document: |
       {
@@ -58,7 +58,7 @@ metadata:
 spec:
   forProvider:
     policyArnRef:
-      name: {{ include "operator.fullname" . }}
+      name: arn:aws:iam::{{ .Values.backends.aws.accountId }}:policy/{{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) }}
     roleNameRef:
-      name: {{ include "operator.fullname" . }}
+      name: {{ .Values.backends.aws.crossplane.operator.roleName | default (include "operator.fullname" .) }}
 {{- end }}
