@@ -58,6 +58,6 @@ metadata:
   name: {{ include "injector.fullname" . }}
 spec:
   forProvider:
-    policyArn: arn:aws:iam::{{ .Values.backends.aws.accountId }}:policy/{{ .Values.backends.aws.crossplane.injector.policyName | default (include "injector.fullname" .) }}
+    policyArn: arn:aws:iam::{{ .Values.backends.aws.accountID }}:policy/{{ .Values.backends.aws.crossplane.injector.policyName | default (include "injector.fullname" .) }}
     roleName: {{ .Values.backends.aws.crossplane.injector.roleName | default (include "injector.fullname" .) }}
 {{- end }}

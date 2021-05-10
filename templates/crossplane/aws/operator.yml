@@ -58,7 +58,7 @@ metadata:
 spec:
   forProvider:
     policyArnRef:
-      name: arn:aws:iam::{{ .Values.backends.aws.accountId }}:policy/{{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) }}
+      name: arn:aws:iam::{{ .Values.backends.aws.accountID }}:policy/{{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) }}
     roleNameRef:
       name: {{ .Values.backends.aws.crossplane.operator.roleName | default (include "operator.fullname" .) }}
 {{- end }}
