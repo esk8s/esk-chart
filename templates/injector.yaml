@@ -30,11 +30,11 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "injector.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.injector.podSecurityContext | nindent 8 }}
       containers:
         - name: esk
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.injector.securityContext | nindent 12 }}
           image: "{{ .Values.injector.image.repository }}:{{ .Values.injector.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.injector.image.pullPolicy }}
           env:

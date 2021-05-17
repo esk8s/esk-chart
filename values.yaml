@@ -24,6 +24,7 @@ backends:
     accountID: ""
     region: ""
     oidcProvider:
+    credentialsPath:
     crossplane:
       enabled: false
       injector:
@@ -41,7 +42,7 @@ init:
   image:
     repository: esk8s/esk-init
     pullPolicy: IfNotPresent
-    tag: 0.6.0
+    tag: 0.8.0
 
 
 injector:
@@ -54,7 +55,7 @@ injector:
   image:
     repository: esk8s/esk-injector
     pullPolicy: IfNotPresent
-    tag: 0.6.0
+    tag: 0.8.0
 
   tls:
     # Path to the tls certificate, required if secretName is empty and certificateGenerator is disabled
@@ -91,7 +92,7 @@ injector:
     type: ClusterIP
     port: 443
 
-  env: []
+  env: {}
   resources: {}
   autoscaling:
     enabled: false
@@ -133,7 +134,7 @@ operator:
     repository: esk8s/esk-operator
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.6.0
+    tag: 0.8.0
 
   serviceAccount:
     # Specifies whether a service account should be created
@@ -147,9 +148,12 @@ operator:
   rbac:
     create: true
 
+  plugins: []
+  # ['gitlab_access_token', 'aws_access_key']
+
   labels: {}
 
-  env: []
+  env: {}
   resources: {}
   autoscaling:
     enabled: false
@@ -160,6 +164,7 @@ operator:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  volumeMounts: []
 
 ingress:
   enabled: false

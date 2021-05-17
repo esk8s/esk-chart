@@ -5,7 +5,7 @@ metadata:
   name: "{{ include "operator.fullname" . }}"
 spec:
   forProvider:
-    name: "{{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) }}"
+    name: {{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) | quote }}
     description: Policy for the esk operator
     document: |
       {
@@ -14,7 +14,9 @@ spec:
           {
             "Effect": "Allow",
             "Action": [
-                "secretsmanager:*"
+                "secretsmanager:*",
+                "iam:CreateAccessKey",
+                "iam:DeleteAccessKey"
             ],
             "Resource": "*"
           }
@@ -25,7 +27,6 @@ apiVersion: identity.aws.crossplane.io/v1beta1
 kind: IAMRole
 metadata:
   name: {{ include "operator.fullname" . }}
-  namespace: tools
   annotations:
     crossplane.io/external-name: {{ .Values.backends.aws.crossplane.operator.roleName | default (include "operator.fullname" .) }}
 spec:
@@ -54,11 +55,8 @@ apiVersion: identity.aws.crossplane.io/v1beta1
 kind: IAMRolePolicyAttachment
 metadata:
   name: {{ include "operator.fullname" . }}
-  namespace: tools
 spec:
   forProvider:
-    policyArnRef:
-      name: arn:aws:iam::{{ .Values.backends.aws.accountID }}:policy/{{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) }}
-    roleNameRef:
-      name: {{ .Values.backends.aws.crossplane.operator.roleName | default (include "operator.fullname" .) }}
+    policyArn: arn:aws:iam::{{ .Values.backends.aws.accountID }}:policy/{{ .Values.backends.aws.crossplane.operator.policyName | default (include "operator.fullname" .) }}
+    roleName: {{ .Values.backends.aws.crossplane.operator.roleName | default (include "operator.fullname" .) }}
 {{- end }}

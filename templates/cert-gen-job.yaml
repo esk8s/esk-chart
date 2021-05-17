@@ -5,8 +5,8 @@ metadata:
   name: {{ include "certificateGenerator.fullname" . }}
   labels:
     {{- include "certificateGenerator.labels" . | nindent 4 }}
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
+  # annotations:
+  #   helm.sh/hook: post-upgrade
 spec:
   template:
     metadata:
@@ -16,7 +16,7 @@ spec:
         {{ toYaml . }}
         {{- end }}
     spec:
-      serviceAccountName: {{ include "certificateGenerator.serviceAccountName" .  }}
+      serviceAccountName: {{ include "certificateGenerator.serviceAccountName" . }}
       containers:
         - name: gen-injector
           image: "{{ .Values.certificateGenerator.image.repository }}:{{ .Values.certificateGenerator.image.tag | default "latest" }}"

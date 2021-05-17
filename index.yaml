@@ -3,7 +3,17 @@ entries:
   esk:
   - apiVersion: v2
     appVersion: 0.7.0
-    created: "2021-05-10T08:36:09.023307+02:00"
+    created: "2021-05-17T07:47:52.432638+02:00"
+    description: Helm chart for the kubernetes secrets control plane
+    digest: 873b8d5c2ef85435203de452584856995809ee9a2a6acd721804ff7e784285dc
+    name: esk
+    type: application
+    urls:
+    - releases/esk-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 0.7.0
+    created: "2021-05-17T07:47:52.431808+02:00"
     description: Helm chart for the kubernetes secrets control plane
     digest: 93f28b10f039f612b547e100f20f2584164ea326c7a20da9cfecc9c28a10091a
     name: esk
@@ -13,7 +23,7 @@ entries:
     version: 0.3.7
   - apiVersion: v2
     appVersion: 0.7.0
-    created: "2021-05-10T08:36:09.022398+02:00"
+    created: "2021-05-17T07:47:52.427361+02:00"
     description: Helm chart for the kubernetes secrets control plane
     digest: 3227c073eab956fb3e581803a3122c19db1b6849e8a53df4a5034d2b74f18dba
     name: esk
@@ -21,34 +31,4 @@ entries:
     urls:
     - releases/esk-0.3.6.tgz
     version: 0.3.6
-  - apiVersion: v2
-    appVersion: 0.7.0
-    created: "2021-05-10T08:36:09.020713+02:00"
-    description: Helm chart for the kubernetes secrets control plane
-    digest: 6c0b4fbe73dfd7bdc8ea03d389c758bb5a6de285c23d6b7e8e0d13b7eda33823
-    name: esk
-    type: application
-    urls:
-    - releases/esk-0.3.5.tgz
-    version: 0.3.5
-  - apiVersion: v2
-    appVersion: 0.7.0
-    created: "2021-05-10T08:36:09.019345+02:00"
-    description: Helm chart for the kubernetes secrets control plane
-    digest: 0b5c709cc2ee21e70ef58ccfdf3785c191dce5950cfc0b6c7fe5f257def62a3e
-    name: esk
-    type: application
-    urls:
-    - releases/esk-0.3.4.tgz
-    version: 0.3.4
-  - apiVersion: v2
-    appVersion: 0.7.0
-    created: "2021-05-10T08:36:09.017883+02:00"
-    description: Helm chart for the kubernetes secrets control plane
-    digest: c080eb4db3994b3bb6919d9a5d6055a7ca53daa49da4bc46459e3978ecc89b72
-    name: esk
-    type: application
-    urls:
-    - releases/esk-0.3.3.tgz
-    version: 0.3.3
-generated: "2021-05-10T08:36:09.016038+02:00"
+generated: "2021-05-17T07:47:52.424209+02:00"
